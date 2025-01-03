@@ -40,7 +40,7 @@ class WikiInfoboxParser:
             'th',
             'infobox-label'
         )
-        
+
         if capital_row:
             capital_cell = capital_row.find_next('td', class_='infobox-data')
             if capital_cell and (capital_link := capital_cell.find('a')):
@@ -50,7 +50,8 @@ class WikiInfoboxParser:
     def extract_timezone(self) -> Optional[str]:
         timezone_terms = [r'Time Zone']
         for term in timezone_terms:
-            timezone_row = self.infobox.find('th', string=re.compile(term, re.IGNORECASE))
+            timezone_row = self.infobox.find(
+                'th', string=re.compile(term, re.IGNORECASE))
             if timezone_row:
                 timezone_cell = timezone_row.find_next('td')
                 timezone = TextCleaner.clean_text(timezone_cell.get_text())
@@ -58,9 +59,11 @@ class WikiInfoboxParser:
         return None
 
     def extract_government(self) -> Optional[str]:
-        government_terms = [r'Government', r'Government type', r'Government Form']
+        government_terms = [r'Government',
+                            r'Government type', r'Government Form']
         for term in government_terms:
-            government_row = self.infobox.find('th', string=re.compile(term, re.IGNORECASE))
+            government_row = self.infobox.find(
+                'th', string=re.compile(term, re.IGNORECASE))
             if government_row:
                 government_cell = government_row.find_next('td')
                 government = TextCleaner.clean_text(government_cell.get_text())
@@ -73,7 +76,7 @@ class WikiInfoboxParser:
             class_='ib-country-fake-li',
             string=re.compile(r'Total', re.IGNORECASE)
         )
-        
+
         if not total_div:
             return None
 
@@ -82,15 +85,15 @@ class WikiInfoboxParser:
             return None
 
         raw_text = ''.join(total_td.stripped_strings)
-        
+
         if km_area := re.search(r'([\d,]+(?:\.\d+)?)\s*km²?', raw_text):
             return km_area.group(1).replace(',', '')
-        
+
         if mi_area := re.search(r'([\d,]+(?:\.\d+)?)\s*sq\s*mi', raw_text):
             mi_value = float(mi_area.group(1).replace(',', ''))
             km_value = mi_value * 2.58999
             return f"{km_value:,.2f}".rstrip('0').rstrip('.')
-        
+
         return raw_text
 
     def extract_density(self) -> Optional[str]:
@@ -99,7 +102,7 @@ class WikiInfoboxParser:
             class_='ib-country-fake-li',
             string=re.compile(r'Density', re.IGNORECASE)
         )
-        
+
         if not density_div:
             return None
 
@@ -108,20 +111,20 @@ class WikiInfoboxParser:
             return None
 
         raw_text = ''.join(density_td.stripped_strings)
-        
+
         km_pattern = (
             r'([\d,.]+)(?:\[[\d\w]+\])?(?:\s*\/\s*km2|\s*\/\s*km²)'
         )
         if km_match := re.search(km_pattern, raw_text, re.IGNORECASE):
             value = float(km_match.group(1).replace(',', '.'))
             return f"{value:.1f}"
-        
+
         mi_pattern = r'([\d,.]+)(?:\[[\d\w]+\])?(?:\s*\/\s*sq\s*mi)'
         if mi_match := re.search(mi_pattern, raw_text, re.IGNORECASE):
             mi_value = float(mi_match.group(1).replace(',', '.'))
             km_value = mi_value * 0.386102
             return f"{km_value:.1f}"
-        
+
         return None
 
     def extract_spoken_language(self) -> Optional[str]:
@@ -147,13 +150,13 @@ class CountryScraper:
         try:
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
-            
+
             soup = BeautifulSoup(response.text, 'html.parser')
             infobox = soup.find('table', class_='infobox')
-            
+
             if not infobox:
                 return {"error": "Infobox not found"}
-            
+
             parser = WikiInfoboxParser(infobox)
             country_info = {
                 'Capital Name': parser.extract_capital(),
@@ -163,9 +166,9 @@ class CountryScraper:
                 'Spoken Language': parser.extract_spoken_language(),
                 'Density': parser.extract_density()
             }
-            
+
             return {k: v for k, v in country_info.items() if v is not None}
-            
+
         except requests.RequestException as e:
             return {"error": f"Request failed: {str(e)}"}
         except Exception as e:
@@ -181,7 +184,7 @@ def main():
         "https://en.wikipedia.org/wiki/Liberia",
         "https://en.wikipedia.org/wiki/Myanmar"
     ]
-    
+
     scraper = CountryScraper()
     for url in urls:
         print(f"Scraping {url}:")

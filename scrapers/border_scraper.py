@@ -2,8 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict
 
+
 def get_countries_and_neighbors() -> Dict[str, List[str]]:
-    url = "https://en.wikipedia.org/wiki/List_of_countries_and_territories_by_number_of_land_borders"
+    url = (
+        "https://en.wikipedia.org/wiki/List_of_countries_and_territories_by_"
+        "number_of_land_borders"
+    )
+
     headers = {'User-Agent': 'Mozilla/5.0'}
 
     try:
@@ -38,7 +43,11 @@ def get_countries_and_neighbors() -> Dict[str, List[str]]:
                     country = country_a_tag.get_text().strip()
                     neighbors = [a.get_text().strip() for a in neighbor_a_tags]
 
-                    neighbors = [neighbor for neighbor in neighbors if neighbor and "[" not in neighbor and "]" not in neighbor]
+                    neighbors = [
+                        neighbor for neighbor in neighbors
+                        if neighbor and "[" not in neighbor and "]"
+                        not in neighbor
+                    ]
 
                     country_neighbors[country] = neighbors
 
@@ -48,15 +57,21 @@ def get_countries_and_neighbors() -> Dict[str, List[str]]:
         print(f"An error occurred while fetching country data: {e}")
         return {}
 
+
 def get_neighbors_for_country(country_name: str) -> List[str]:
     try:
         country_neighbors = get_countries_and_neighbors()
         if country_name not in country_neighbors:
-            print(f"Country '{country_name}' not found on the land borders wiki page, defaulting to no neighbors.")
+            print(
+                f"Country '{country_name}' not found on the borders wiki page"
+            )
             return []
         return country_neighbors.get(country_name, [])
     except Exception as e:
-        print(f"An error occurred while fetching neighbors for {country_name}: {e}")
+        print(
+            f"An error occurred while fetching neighbors for {country_name}: "
+            f"{e}"
+        )
         return []
 
 # if __name__ == "__main__":

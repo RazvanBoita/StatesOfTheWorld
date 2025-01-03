@@ -5,7 +5,6 @@ from scrapers.border_scraper import get_neighbors_for_country
 from scrapers.country_info_scraper import CountryScraper
 
 
-
 def process_countries(file_path: str) -> List[Dict[str, Any]]:
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -42,6 +41,7 @@ def process_countries(file_path: str) -> List[Dict[str, Any]]:
 
     return processed_data
 
+
 def save_processed_data(data: List[Dict[str, Any]], output_path: str):
     try:
         with open(output_path, 'w', encoding='utf-8') as file:
@@ -50,13 +50,15 @@ def save_processed_data(data: List[Dict[str, Any]], output_path: str):
     except Exception as e:
         print(f"Failed to save data: {e}")
 
+
 def main():
     input_file = 'data/countries_data_with_links.json'
-    output_file = 'data/processed_country_data_new.json' #fara new inainte
-    
+    output_file = 'data/processed_country_data_new.json'  # fara new inainte
+
     processed_data = process_countries(input_file)
     if processed_data:
         save_processed_data(processed_data, output_file)
+
 
 if __name__ == "__main__":
     main()

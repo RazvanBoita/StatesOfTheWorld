@@ -13,7 +13,6 @@ def get_all_countries():
     return jsonify(countries), 200
 
 
-
 @api_bp.route('/top-population/<int:n>', methods=['GET'])
 @api_bp.route('/top-population', methods=['GET'])
 def top_countries_by_population(n=10):
@@ -27,32 +26,34 @@ def top_countries_by_density(n=10):
     countries = country_service.get_top_by_density(n)
     return jsonify(countries), 200
 
+
 @api_bp.route('/speaking', methods=['GET'])
 def countries_speaking_language():
-    language = request.args.get('language') 
+    language = request.args.get('language')
     if not language:
         return jsonify({"error": "Language parameter is required."}), 400
-    
+
     countries = country_service.get_by_language(language)
     return jsonify(countries), 200
 
+
 @api_bp.route('/timezone', methods=['GET'])
 def countries_by_timezone():
-    timezone = request.args.get('timezone') 
+    timezone = request.args.get('timezone')
 
     if not timezone:
         return jsonify({"error": "Timezone parameter is required."}), 400
-    
-    
+
     countries = country_service.get_by_timezone(timezone)
     return jsonify(countries), 200
+
 
 @api_bp.route('/political', methods=['GET'])
 def countries_by_regime():
     regime = request.args.get('regime')
     if not regime:
         return jsonify({"error": "Regime parameter is required."}), 400
-    
+
     regime_mapping = {
         "Presidential Republic": "presidential republic",
         "Parliamentary Republic": "parliamentary republic",
@@ -65,14 +66,13 @@ def countries_by_regime():
         "Authoritarian State": "authoritarian",
         "Transitional Government": "transitional government"
     }
-    
+
     if regime not in regime_mapping:
         return jsonify({"error": "Invalid regime type."}), 400
-    
-    regime_query = regime_mapping[regime]
-    countries = country_service.get_by_regime(regime_query) 
-    return jsonify(countries), 200
 
+    regime_query = regime_mapping[regime]
+    countries = country_service.get_by_regime(regime_query)
+    return jsonify(countries), 200
 
 
 app.register_blueprint(api_bp)

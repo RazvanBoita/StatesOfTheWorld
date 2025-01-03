@@ -5,7 +5,11 @@ from urllib.parse import urljoin
 
 BASE_URL = "https://en.wikipedia.org"
 
-URL = "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
+URL = (
+    "https://en.wikipedia.org/wiki/"
+    "List_of_countries_and_dependencies_by_population"
+)
+
 
 response = requests.get(URL)
 soup = BeautifulSoup(response.content, 'html.parser')
@@ -26,7 +30,7 @@ for row in rows[1:]:
             name = cols[1].text.strip()
             country_link = None
 
-        population = cols[2].text.strip()  
+        population = cols[2].text.strip()
 
         countries_data.append({
             'name': name,
@@ -34,7 +38,7 @@ for row in rows[1:]:
             'country_link': country_link,
         })
 
-output_file = 'data/countries_data_with_links_new.json' #fara new la inceput
+output_file = 'data/countries_data_with_links_new.json'  # fara new la inceput
 with open(output_file, 'w', encoding='utf-8') as file:
     json.dump(countries_data, file, indent=4, ensure_ascii=False)
 
