@@ -20,6 +20,19 @@ class Country(Base):
     
     neighbors: Mapped[List["Neighbor"]] = relationship(back_populates="country")
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "population": self.population,
+            "capital": self.capital,
+            "timezone": self.timezone,
+            "government": self.government,
+            "area": self.area,
+            "spoken_language": self.spoken_language,
+            "density": self.density
+        }
+
     def __repr__(self):
         return f"->Country(name={self.name}, population={self.population}, density={self.density})"
 
