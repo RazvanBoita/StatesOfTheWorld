@@ -17,14 +17,14 @@ def fetch_data(endpoint, params=None):
 
 
 def display_results(data):
-    results_box.configure(state="normal")  # Enable editing temporarily
+    results_box.configure(state="normal")
     results_box.delete("1.0", tk.END)
     if isinstance(data, (list, dict)):
         formatted_data = json.dumps(data, indent=4)
         results_box.insert(tk.END, formatted_data)
     else:
         results_box.insert(tk.END, str(data))
-    results_box.configure(state="disabled")  # Make it read-only again
+    results_box.configure(state="disabled")
 
 
 def get_all_countries():
@@ -33,13 +33,13 @@ def get_all_countries():
 
 
 def get_top_by_population():
-    n = 10  # Default value
+    n = 10
     data = fetch_data("/top-population", {"n": n})
     display_results(data)
 
 
 def get_top_by_density():
-    n = 10  # Default value
+    n = 10
     data = fetch_data("/top-density", {"n": n})
     display_results(data)
 
@@ -71,12 +71,10 @@ def get_countries_by_regime():
     display_results(data)
 
 
-# Set up the GUI
 root = tk.Tk()
 root.title("Country API Client")
 root.geometry("700x500")
 
-# Frame for inputs
 input_frame = ttk.Frame(root)
 input_frame.pack(pady=10, padx=10, fill="x")
 
@@ -92,7 +90,6 @@ ttk.Label(input_frame, text="Regime:").grid(row=2, column=0, sticky="w")
 regime_input = ttk.Entry(input_frame)
 regime_input.grid(row=2, column=1)
 
-# Frame for buttons
 button_frame = ttk.Frame(root)
 button_frame.pack(pady=10, padx=10, fill="x")
 
@@ -109,21 +106,16 @@ ttk.Button(button_frame, text="By Timezone",
 ttk.Button(button_frame, text="By Regime",
            command=get_countries_by_regime).grid(row=1, column=2, padx=5)
 
-# Frame for results
 results_frame = ttk.Frame(root)
 results_frame.pack(pady=10, padx=10, fill="both", expand=True)
 
-# Add a scrollbar
 scrollbar = ttk.Scrollbar(results_frame)
 scrollbar.pack(side="right", fill="y")
 
-# Add the results box
 results_box = tk.Text(results_frame, wrap="word", height=15,
                       state="disabled", yscrollcommand=scrollbar.set)
 results_box.pack(pady=5, padx=5, fill="both", expand=True)
 
-# Configure the scrollbar to work with the text box
 scrollbar.config(command=results_box.yview)
 
-# Run the GUI
 root.mainloop()
