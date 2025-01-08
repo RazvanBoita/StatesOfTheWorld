@@ -2,6 +2,8 @@ import requests
 import tkinter as tk
 from tkinter import ttk, messagebox
 import json
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 BASE_URL = "http://127.0.0.1:5000/api/countries"
 
@@ -20,7 +22,7 @@ def display_results(data):
     results_box.configure(state="normal")
     results_box.delete("1.0", tk.END)
     if isinstance(data, (list, dict)):
-        formatted_data = json.dumps(data, indent=4)
+        formatted_data = json.dumps(data, indent=4, ensure_ascii=False)
         results_box.insert(tk.END, formatted_data)
     else:
         results_box.insert(tk.END, str(data))
